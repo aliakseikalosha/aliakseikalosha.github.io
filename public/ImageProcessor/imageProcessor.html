@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Paydate image converter</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div id="input">
+            <h1>
+                Image Processor
+            </h1>
+            <p>Please select the image you want to convert for Playdate</p>
+            <input type ="file" id ="image_input" accept ="image/jpeg, image/png, image/jpg">
+        </div>
+
+        <table>
+            <tr> <td>
+                    <p>Source</p>
+                </td>
+                <td>
+                    <p>Settings</p>
+                </td>
+                <td>
+                    <p>Result</p>
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+        <canvas id="display_canvas"></canvas>
+                </td>
+                <td>
+                    <div id="color_holder_temp">
+                        <div id="color_settings">
+                            <div class="color_icon"></div>
+                            <input type="range" min="1" max="100" value="50" class="slider">
+                        </div>
+                    </div>
+                </td>
+                <td>
+        <canvas id="result_canvas"></canvas>
+                </td>
+            </tr>
+        </table>
+
+        <script src="imageProcessor.js" async defer></script>
+    </body>
+</html>
