@@ -1,0 +1,38 @@
+td{
+    text-align: center;
+    vertical-align: top;
+    border: 1px;
+    border-color: gray;
+}
+table, td, th {
+    border: 1px solid black;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px;
+}
+
+body{
+    margin: 10px;
+}
+
+#input{
+    margin: 10px;
+}
+.settings{
+    width: 350px;
+}
+#color_holder_temp{
+    display: none;
+}
+.color_holder{
+    margin: 5px;
+    min-height: 50px;
+}
+.color_icon{
+    width: 48px;
+    height: 48px;
+    float: left;
+}
