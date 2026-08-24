@@ -109,9 +109,7 @@ function convertImageMesh(data) {
   }
 
   for (let i = 0; i < data.length; i += 4) {
-    let color = { r: data[i], g: data[i + 1], b: data[i + 2] };
-    const colorData = colorDataList.find((a) => isEqual(a.color, color));
-    setValue(data, i, ValueTo1BitColor(colorData, i));
+    setValue(data, i, ValueTo1BitColor(findColorData(data), i));
   }
 }
 
@@ -127,9 +125,7 @@ function convertImageRandom(data) {
   }
 
   for (let i = 0; i < data.length; i += 4) {
-    let color = { r: data[i], g: data[i + 1], b: data[i + 2] };
-    const colorData = colorDataList.find((a) => isEqual(a.color, color));
-    setValue(data, i, ValueTo1BitColor(colorData));
+    setValue(data, i, ValueTo1BitColor(findColorData(data)));
   }
 
 }
@@ -147,12 +143,15 @@ function convertImageError(data) {
     return [errorDelta > 0 ? 255 : 0, errorDelta];
   }
   for (let i = 0; i < data.length; i += 4) {
-    let color = { r: data[i], g: data[i + 1], b: data[i + 2] };
-    const colorData = colorDataList.find((a) => isEqual(a.color, color));
     let value = 0;
-    [value, errorDelta] = ValueTo1BitColorError(colorData, errorDelta);
+    [value, errorDelta] = ValueTo1BitColorError(findColorData(data), errorDelta);
     setValue(data, i, value);
   }
+}
+
+function findColorData(data) {
+  let color = { r: data[i], g: data[i + 1], b: data[i + 2] };
+  return colorDataList.find((a) => isEqual(a.color, color));
 }
 
 function setValue(data, i, value) {
@@ -160,8 +159,6 @@ function setValue(data, i, value) {
   data[i + 1] = value; // green
   data[i + 2] = value; // blue
 }
-
-
 
 const createColorData = (color) => {
   return {
