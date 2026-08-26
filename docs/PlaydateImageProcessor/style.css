@@ -120,6 +120,7 @@ td {
 }
 
 td.settings {
+    vertical-align: top;
     background: var(--pd-screen);
     width: 240px;
     text-align: left;

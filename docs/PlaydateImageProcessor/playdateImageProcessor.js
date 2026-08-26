@@ -9,9 +9,15 @@ const conversionOption = {
   "Random": convertImageRandom,
   "Error": convertImageError
 }
+let useRealColors = true;
 let currentImage = null;
 let colorDataList = [];
 let files = [];
+const rgbColorDataList = [
+  createColorData(createColor(255, 0, 0)),
+  createColorData(createColor(0, 255, 0)),
+  createColorData(createColor(0, 0, 255)),
+]
 
 
 init();
@@ -72,8 +78,9 @@ function fitCanvasToImage(img, canvas) {
 }
 
 function cleanUp() {
-  for (let i = 0; i < colorDataList.length; i++) {
-    const element = colorDataList[i].node;
+  let data = useRealColors ? colorDataList : rgbColorDataList;
+  for (let i = 0; i < data.length; i++) {
+    const element = data[i].node;
     if (element) {
       element.remove();
     }
@@ -81,14 +88,16 @@ function cleanUp() {
 }
 
 function fillSettings() {
-  for (let i = 0; i < colorDataList.length; i++) {
-    const element = colorDataList[i];
+  useRealColors = colorDataList.length > 0;
+  listOfColorData = useRealColors ? colorDataList : rgbColorDataList;
+  for (let i = 0; i < listOfColorData.length; i++) {
+    const element = listOfColorData[i];
     let node = colorHolderTemplate.cloneNode(true);
     node.id = node.id.replace("temp", i);
     element.node = node;
     colorHolderTemplate.parentElement.appendChild(node);
     node.children[0].style.backgroundColor = `rgb(${element.color.r},${element.color.g},${element.color.b})`;
-    node.children[1].value = `${Math.floor(i / colorDataList.length * 100)}`;
+    node.children[1].value = `${Math.floor(listOfColorData[i].value / 255 * 100)}`;
     node.children[1].addEventListener('input', function () {
       element.value = node.children[1].value * 2.55;
       convertImage(currentImage);
@@ -198,8 +207,14 @@ function setValue(data, i, value) {
 function createColorData(color) {
   return {
     color: color,
-    value: (color.r + color.g + color.b) / 3
+    value: useRealColors ? (color.r + color.g + color.b) / 3 : calculateValueFromRGB(color)
   };
+}
+function calculateValueFromRGB(color) {
+  let rStrengh = rgbColorDataList[0].value / 255
+  let gStrengh = rgbColorDataList[1].value / 255
+  let bStrengh = rgbColorDataList[2].value / 255
+  return (color.r * rStrengh + color.g * gStrengh + color.b * bStrengh) / 3
 }
 
 function createColorFromData(data, i) {
