@@ -1,3 +1,4 @@
+const MaxColorCount = 16;
 const image_input = document.querySelector('#image_input');
 const display = document.querySelector('#display_canvas');
 const result = document.querySelector('#result_canvas');
@@ -75,7 +76,7 @@ function fillSettings() {
     node.id = node.id.replace("temp", i);
     element.node = node;
     colorHolderTemplate.parentElement.appendChild(node);
-    node.children[0].style.backgroundColor = `#${element.color.r.toString(16)}${element.color.g.toString(16)}${element.color.b.toString(16)}`;
+    node.children[0].style.backgroundColor = `rgb(${element.color.r},${element.color.g},${element.color.b})`;
     node.children[1].value = `${Math.floor(i / colorDataList.length * 100)}`;
     node.children[1].addEventListener('input', function () {
       element.value = node.children[1].value * 2.55;
@@ -94,7 +95,7 @@ function initSettings() {
     if (colorDataList.find((a) => isEqual(a.color, color)) == undefined) {
       colorDataList.push(createColorData(color));
     }
-    if (colorDataList.length > 16) {
+    if (colorDataList.length > MaxColorCount) {
       colorDataList = [];
       return;
     }
