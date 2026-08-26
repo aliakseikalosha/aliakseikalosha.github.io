@@ -5,7 +5,7 @@ const result = document.querySelector('#result_canvas');
 const colorHolderTemplate = document.querySelector('#color_holder_temp');
 const conversionSelector = document.querySelector(`#method`);
 const conversionOption = {
-  "Mesh": convertImageMesh,
+  "Dither": convertImageDither,
   "Random": convertImageRandom,
   "Error": convertImageError
 }
@@ -25,15 +25,21 @@ function init() {
     conversionSelector.options[i] = new Option(x, x);
   }
   conversionSelector.onchange = function () {
-    convertImage(currentImage);
+    if (currentImage) {
+      convertImage(currentImage);
+    }
   }
 
   image_input.addEventListener('change', function () {
+    if (this.files.length == 0) {
+      return;
+    }
     const fileReader = new FileReader();
     fileReader.addEventListener('load', () => {
       currentImage = new Image();
       currentImage.src = fileReader.result;
       currentImage.onload = () => {
+        cleanUp();
         fitCanvasToImage(currentImage, display);
         initSettings();
         fillSettings();
@@ -65,14 +71,19 @@ function fitCanvasToImage(img, canvas) {
   ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 }
 
+function cleanUp() {
+  for (let i = 0; i < colorDataList.length; i++) {
+    const element = colorDataList[i].node;
+    if (element) {
+      element.remove();
+    }
+  }
+}
+
 function fillSettings() {
   for (let i = 0; i < colorDataList.length; i++) {
-    let node = document.getElementById(colorHolderTemplate.id.replace("temp", i));
-    if (node) {
-      node.remove();
-    }
     const element = colorDataList[i];
-    node = colorHolderTemplate.cloneNode(true);
+    let node = colorHolderTemplate.cloneNode(true);
     node.id = node.id.replace("temp", i);
     element.node = node;
     colorHolderTemplate.parentElement.appendChild(node);
@@ -112,7 +123,7 @@ function convertImage(image) {
   ctx.putImageData(imageData, 0, 0);
 }
 
-function convertImageMesh(data) {
+function convertImageDither(data) {
   const ValueTo1BitColor = (colorData, i) => {
     let index = -1;
     if (colorDataList.length == 0) {
