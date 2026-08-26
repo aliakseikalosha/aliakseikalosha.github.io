@@ -4,58 +4,62 @@
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Paydate image converter</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <!--[if lt IE 7]>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Paydate image converter</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        <div id="input">
-            <h1>
-                Playdate Image Processor
-            </h1>
-            <p>Please select the image you want to convert for Playdate</p>
-            <input type ="file" id ="image_input" accept ="image/jpeg, image/png, image/jpg" multiple>
-            <button onclick="downloadResult()">Download result</button>
-        </div>
-        <table>
-            <tr> <td>
-                    <p>Source</p>
-                </td>
-                <td class="settings">
-                    <p>Settings</p>
-                </td>
-                <td>
-                    <p>Result</p>
-                </td>
+    <div id="input">
+        <h1>
+            Playdate Image Processor
+        </h1>
+        <p>Please select the image you want to convert for Playdate</p>
+        <input title="fileToConvert" type="file" id="image_input" accept="image/jpeg, image/png, image/jpg" multiple>
+        <button onclick="downloadResult()">Download result</button>
+    </div>
+    <table>
+        <tr>
+            <td>
+                <p>Source</p>
+            </td>
+            <td class="settings">
+                <p>Settings</p>
+            </td>
+            <td>
+                <p>Result</p>
+            </td>
 
-            </tr>
-            <tr>
-                <td>
-                    <canvas id="display_canvas"></canvas>
-                </td>
-                <td class="settings">
-                    <div class="method_select">
-                        <select name="method" id="method">
-                        </select>
-                    </div>
-                    <div id="color_holder_temp" class="color_holder">
-                        <div class="color_icon"></div>
-                        <input type="range" min="1" max="100" value="50" class="slider">
-                    </div>
-                </td>
-                <td>
-                    <canvas id="result_canvas"></canvas>
-                </td>
-            </tr>
-        </table>
+        </tr>
+        <tr>
+            <td>
+                <canvas id="display_canvas"></canvas>
+            </td>
+            <td class="settings">
+                <div class="method_select">
+                    <select title="conversionMethod" name="method" id="method">
+                    </select>
+                </div>
+                <div id="color_holder_temp" class="color_holder">
+                    <div class="color_icon"></div>
+                    <input title="probability" type="range" min="1" max="100" value="50" class="slider">
+                </div>
+            </td>
+            <td>
+                <canvas id="result_canvas"></canvas>
+            </td>
+        </tr>
+    </table>
 
-        <script src="playdateImageProcessor.js" async defer></script>
-    </body>
+    <script src="playdateImageProcessor.js" async defer></script>
+</body>
+
 </html>

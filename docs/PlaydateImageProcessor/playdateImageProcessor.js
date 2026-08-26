@@ -45,11 +45,23 @@ function init() {
 }
 
 function fitCanvasToImage(img, canvas) {
-  var ctx = canvas.getContext("2d");
-  canvas.width = img.width;
-  canvas.height = img.height;
+  let ctx = canvas.getContext("2d");
+  if (canFitOnPlayadte(img)) {
+    canvas.width = img.width;
+    canvas.height = img.height;
+  } else {
+    let aspectRatio = img.width / img.height;
+    if (img.width > img.height) {
+      canvas.width = 240 * aspectRatio;
+      canvas.height = 240;
+    } else {
+      canvas.width = 240;
+      canvas.height = 240 / aspectRatio;
+    }
+  }
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(img, 0, 0);
+  ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 }
 
 function fillSettings() {
@@ -82,6 +94,10 @@ function initSettings() {
     if (colorDataList.find((a) => isEqual(a.color, color)) == undefined) {
       colorDataList.push(createColorData(color));
     }
+    if (colorDataList.length > 16) {
+      colorDataList = [];
+      return;
+    }
   }
   colorDataList.sort((a, b) => a.value - b.value);
 }
@@ -97,18 +113,23 @@ function convertImage(image) {
 
 function convertImageMesh(data) {
   const ValueTo1BitColor = (colorData, i) => {
-    let index = colorDataList.findIndex(c => isEqual(c.color, colorData.color));
-    if (index < colorDataList.length / 4) {
+    let index = -1;
+    if (colorDataList.length == 0) {
+      index = colorData.value / 255;
+    } else {
+      index = colorDataList.findIndex(c => isEqual(c.color, colorData.color)) / colorDataList.length;
+    }
+    if (index < 0.25) {
       return 0;
     }
-    if (index >= colorDataList.length / 4 * 3) {
+    if (index >= 0.75) {
       return 255;
     }
     let pixelIndex = i / 4;
     let x = Math.floor(pixelIndex % currentImage.width);
     let y = Math.floor(pixelIndex / currentImage.width);
 
-    if (index < colorDataList.length / 2) {
+    if (index < 0.5) {
       return x % 2 == y % 2 ? 255 : 0;
     } else {
       return x % 2 == 1 & y % 2 == 1 ? 0 : 255;
@@ -144,8 +165,15 @@ function convertImageError(data) {
   }
 }
 
+function canFitOnPlayadte(img) {
+  return Math.max(img.width, img.height) <= 400 && Math.min(img.width, img.height) <= 240;
+}
+
 function findColorData(data, i) {
   let color = createColor(data[i], data[i + 1], data[i + 2]);
+  if (colorDataList.length == 0) {
+    return createColorData(color);
+  }
   return colorDataList.find((a) => isEqual(a.color, color));
 }
 
