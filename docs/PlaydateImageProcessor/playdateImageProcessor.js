@@ -5,13 +5,19 @@ const result = document.querySelector('#result_canvas');
 const colorHolderTemplate = document.querySelector('#color_holder_temp');
 const conversionSelector = document.querySelector(`#method`);
 const conversionOption = {
-  "Mesh": convertImageMesh,
+  "Dither": convertImageDither,
   "Random": convertImageRandom,
   "Error": convertImageError
 }
+let useRealColors = true;
 let currentImage = null;
 let colorDataList = [];
 let files = [];
+const rgbColorDataList = [
+  createColorData(createColor(255, 0, 0)),
+  createColorData(createColor(0, 255, 0)),
+  createColorData(createColor(0, 0, 255)),
+]
 
 
 init();
@@ -25,15 +31,21 @@ function init() {
     conversionSelector.options[i] = new Option(x, x);
   }
   conversionSelector.onchange = function () {
-    convertImage(currentImage);
+    if (currentImage) {
+      convertImage(currentImage);
+    }
   }
 
   image_input.addEventListener('change', function () {
+    if (this.files.length == 0) {
+      return;
+    }
     const fileReader = new FileReader();
     fileReader.addEventListener('load', () => {
       currentImage = new Image();
       currentImage.src = fileReader.result;
       currentImage.onload = () => {
+        cleanUp();
         fitCanvasToImage(currentImage, display);
         initSettings();
         fillSettings();
@@ -65,19 +77,27 @@ function fitCanvasToImage(img, canvas) {
   ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
 }
 
-function fillSettings() {
-  for (let i = 0; i < colorDataList.length; i++) {
-    let node = document.getElementById(colorHolderTemplate.id.replace("temp", i));
-    if (node) {
-      node.remove();
+function cleanUp() {
+  let data = useRealColors ? colorDataList : rgbColorDataList;
+  for (let i = 0; i < data.length; i++) {
+    const element = data[i].node;
+    if (element) {
+      element.remove();
     }
-    const element = colorDataList[i];
-    node = colorHolderTemplate.cloneNode(true);
+  }
+}
+
+function fillSettings() {
+  useRealColors = colorDataList.length > 0;
+  listOfColorData = useRealColors ? colorDataList : rgbColorDataList;
+  for (let i = 0; i < listOfColorData.length; i++) {
+    const element = listOfColorData[i];
+    let node = colorHolderTemplate.cloneNode(true);
     node.id = node.id.replace("temp", i);
     element.node = node;
     colorHolderTemplate.parentElement.appendChild(node);
     node.children[0].style.backgroundColor = `rgb(${element.color.r},${element.color.g},${element.color.b})`;
-    node.children[1].value = `${Math.floor(i / colorDataList.length * 100)}`;
+    node.children[1].value = `${Math.floor(listOfColorData[i].value / 255 * 100)}`;
     node.children[1].addEventListener('input', function () {
       element.value = node.children[1].value * 2.55;
       convertImage(currentImage);
@@ -112,7 +132,7 @@ function convertImage(image) {
   ctx.putImageData(imageData, 0, 0);
 }
 
-function convertImageMesh(data) {
+function convertImageDither(data) {
   const ValueTo1BitColor = (colorData, i) => {
     let index = -1;
     if (colorDataList.length == 0) {
@@ -187,8 +207,14 @@ function setValue(data, i, value) {
 function createColorData(color) {
   return {
     color: color,
-    value: (color.r + color.g + color.b) / 3
+    value: useRealColors ? (color.r + color.g + color.b) / 3 : calculateValueFromRGB(color)
   };
+}
+function calculateValueFromRGB(color) {
+  let rStrengh = rgbColorDataList[0].value / 255
+  let gStrengh = rgbColorDataList[1].value / 255
+  let bStrengh = rgbColorDataList[2].value / 255
+  return (color.r * rStrengh + color.g * gStrengh + color.b * bStrengh) / 3
 }
 
 function createColorFromData(data, i) {
